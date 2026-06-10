@@ -313,6 +313,19 @@
   </div>
 
   <script>
+    // ============================================================
+    // CONFIG — UPDATE THESE AFTER DEPLOY / SIGN (single place!)
+    // ============================================================
+    const CONFIG = {
+      CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000", // <-- PASTE from `npm run deploy:sepolia`
+      CHAIN_ID: 84532,                       // 84532 = baseSepolia, 8453 = base
+      ASSET_BASE: "https://lvlltd.com",      // for images + metadata JSONs (from prepare)
+      SIGNED_VOUCHERS_URL: "./signed-vouchers.json",
+      // When wiring real calls (see GitHub issue #3):
+      // const { ethers } = window; // or import
+      // const contract = new ethers.Contract(CONFIG.CONTRACT_ADDRESS, ABI, signer);
+    };
+
     // === SHARED FORTUNES (same poetic pool as gallery) ===
     const FORTUNE_POOL = [
       "The chain does not forget those who build in silence.",
@@ -710,8 +723,13 @@
         currentMintedId = newId;
         currentMintedFortune = fortune;
 
-        // Fake tx
+        // Fake tx (demo only)
         const txSig = "0x" + Array.from({length: 64}, () => "0123456789abcdef"[Math.floor(Math.random()*16)]).join("");
+
+        // Real implementation will use:
+        // await contract.mintWithSignature(tokenId, tokenURI, signature, { from: wallet });
+        // where tokenId / tokenURI / signature come from signed-vouchers.json (filtered by user)
+        // contract = new ethers.Contract(CONFIG.CONTRACT_ADDRESS, ABI, provider.getSigner());
 
         txBox.textContent = txSig;
         post.style.display = "block";

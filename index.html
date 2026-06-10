@@ -342,7 +342,8 @@
               • Base (Ethereum L2) • Gas-only redemption<br>
               • Each fortune cryptographically bound to its token<br>
               • No royalties. No utilities. Pure artifact.<br>
-              • Contract verifiable on Basescan (or sepolia.basescan.org for testnet)
+              • Contract: <span id="contract-addr" style="font-family:ui-monospace,monospace;font-size:0.8em;">${CONFIG.CONTRACT_ADDRESS}</span> (update via top CONFIG)
+              • Verifiable on Basescan (or sepolia.basescan.org for testnet)
             </div>
             <div style="margin-top: var(--space-4); font-size:0.8rem; color:var(--gold-dim);">Not financial advice. These are objects of mystery and reflection.</div>
           </div>
@@ -411,6 +412,16 @@
   </div>
 
   <script>
+    // ============================================================
+    // CONFIG — UPDATE THESE AFTER DEPLOY / SIGN (single place!)
+    // ============================================================
+    const CONFIG = {
+      CONTRACT_ADDRESS: "0x0000000000000000000000000000000000000000", // <-- PASTE from `npm run deploy:sepolia`
+      CHAIN_ID: 84532,                       // 84532 = baseSepolia, 8453 = base
+      ASSET_BASE: "https://lvlltd.com",      // for images + metadata JSONs (from prepare)
+      SIGNED_VOUCHERS_URL: "./signed-vouchers.json",
+    };
+
     // === DATA: 12 gallery items with pre-sealed full fortunes for consistency ===
     const GALLERY_ITEMS = [
       { id: "004", rarity: "Whisper", variant: "default", teaser: "The chain does not forget those who build in silence.", full: "The chain does not forget those who build in silence." },
