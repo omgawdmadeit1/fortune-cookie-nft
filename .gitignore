@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+cache/
+artifacts/
+signed-vouchers.json
+samples/
+*.log
+.DS_Store

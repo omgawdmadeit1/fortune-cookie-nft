@@ -1,0 +1,22 @@
+{
+  "name": "fortune-cookie-nft",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare": "node scripts/prepare-assets.js",
+    "sign": "node scripts/sign-vouchers.js",
+    "sign:demo": "node scripts/sign-demo-vouchers.js",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network baseSepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network base",
+    "verify:sepolia": "hardhat verify --network baseSepolia",
+    "verify:mainnet": "hardhat verify --network base"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0",
+    "hardhat": "^2.22.0"
+  }
+}

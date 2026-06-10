@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🥠 Crypto Fortune Cookies • Limited Drop of 10 on Base</title>
+  <meta name="description" content="10 on-chain prophecies on Base. Each Crypto Fortune Cookie is a signed, redeemable artifact. Connect a wallet, redeem a voucher (gas only), and crack to reveal your on-chain fortune. A premium limited collection." />
+  <style>
+    :root {
+      --bg: #050403;
+      --bg-elev: #0a0806;
+      --surface: #12100e;
+      --surface-elev: #1c1815;
+      --gold: #c5a46e;
+      --gold-light: #e8d5a3;
+      --gold-dim: #8a6f42;
+      --crimson: #5c2a2a;
+      --text: #f2e9d8;
+      --text-muted: #9a8f7a;
+      --border: #2a2520;
+      --shadow: rgba(0, 0, 0, 0.65);
+      --radius: 14px;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-8: 3rem;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .serif { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; }
+
+    a { color: var(--gold); text-decoration: none; transition: color 120ms ease; }
+    a:hover { color: var(--gold-light); }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    /* Header / Nav */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-4) 0;
+    }
+    .logo {
+      display: flex; align-items: center; gap: var(--space-2);
+      font-size: 1.1rem; font-weight: 600; letter-spacing: -.02em;
+    }
+    .logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: var(--space-5); align-items: center; }
+    .nav-links a { font-size: 0.9rem; color: var(--text-muted); }
+    .nav-links a:hover { color: var(--text); }
+    .wallet-chip {
+      font-size: 0.75rem; padding: 0.35rem 0.7rem; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--gold); font-family: ui-monospace, monospace;
+      display: none; align-items: center; gap: 0.35rem;
+    }
+    .wallet-chip.connected { display: inline-flex; }
+
+    /* Hero */
+    .hero {
+      min-height: 92vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: var(--space-8) 0 var(--space-6);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(197,164,110,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; max-width: 720px; padding: 0 var(--space-4); }
+    .badge {
+      display: inline-block; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 0.3rem 0.85rem; border: 1px solid var(--gold-dim); border-radius: 999px;
+      color: var(--gold); margin-bottom: var(--space-4);
+    }
+    .hero h1 {
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: clamp(2.6rem, 6.5vw, 4.1rem); line-height: 1.05; font-weight: 600;
+      margin: 0 0 var(--space-3); letter-spacing: -0.025em;
+    }
+    .hero p {
+      font-size: 1.1rem; color: var(--text-muted); max-width: 42ch; margin: 0 auto var(--space-5);
+    }
+    .hero-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.85rem 1.65rem; font-size: 0.95rem; font-weight: 600; border-radius: 10px;
+      border: none; cursor: pointer; transition: all 140ms cubic-bezier(0.2, 0, 0, 1);
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(145deg, var(--gold), #a67c52); color: #050403;
+      box-shadow: 0 4px 14px -2px rgba(197,164,110,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -4px rgba(197,164,110,0.4); }
+    .btn-ghost {
+      background: transparent; color: var(--text); border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); border-color: var(--gold-dim); }
+
+    .stats {
+      display: flex; gap: var(--space-5); justify-content: center; margin-top: var(--space-6);
+      flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted);
+    }
+    .stats span { color: var(--gold); font-weight: 600; }
+
+    /* Sections */
+    section { padding: var(--space-8) 0; }
+    .section-title {
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 1.65rem; margin: 0 0 var(--space-5); letter-spacing: -0.01em;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+      gap: var(--space-4);
+    }
+    .cookie-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      transition: transform 180ms cubic-bezier(0.2,0,0,1), box-shadow 180ms ease, border-color 140ms ease;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .cookie-card:hover, .cookie-card:focus-within {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px -12px var(--shadow);
+      border-color: var(--gold-dim);
+    }
+    .cookie-card .svg-wrap {
+      display: flex; justify-content: center; align-items: center;
+      margin-bottom: var(--space-3); padding: var(--space-2) 0;
+      transition: transform 220ms ease;
+    }
+    .cookie-card:hover .svg-wrap { transform: scale(1.02); }
+    .cookie-card .meta {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2);
+    }
+    .cookie-card .id { font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--gold-dim); }
+    .cookie-card .rarity {
+      font-size: 0.65rem; padding: 1px 7px; border-radius: 999px; letter-spacing: 0.5px;
+      background: var(--surface-elev); color: var(--gold); border: 1px solid var(--border);
+    }
+    .cookie-card .teaser {
+      font-size: 0.82rem; line-height: 1.35; color: var(--text-muted);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      font-style: italic; min-height: 2.6em; margin-bottom: var(--space-3);
+    }
+    .cookie-card .status {
+      font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;
+      padding: 0.15rem 0.55rem; border-radius: 6px;
+    }
+    .cookie-card .status.available { background: rgba(197,164,110,0.1); color: var(--gold); }
+    .cookie-card .status.minted { background: var(--crimson); color: #e8b9b9; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(5,4,3,0.88);
+      display: none; align-items: center; justify-content: center; z-index: 100;
+      padding: var(--space-4);
+    }
+    .modal-backdrop.visible { display: flex; }
+    .modal {
+      background: var(--surface-elev); border: 1px solid var(--border);
+      border-radius: 16px; max-width: 420px; width: 100%;
+      box-shadow: 0 30px 70px -15px var(--shadow);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-body { padding: var(--space-5); }
+    .modal .cookie-display { display: flex; justify-content: center; margin-bottom: var(--space-4); }
+    .modal .fortune-box {
+      background: #1f1a15; border: 1px solid var(--gold-dim);
+      padding: var(--space-4); border-radius: 10px;
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: 1.02rem; line-height: 1.55; font-style: italic; color: var(--text);
+      min-height: 5.2em; margin-bottom: var(--space-4);
+      position: relative;
+    }
+    .modal .fortune-box::before {
+      content: "✧"; position: absolute; top: 10px; left: 14px; font-size: 0.7rem; color: var(--gold-dim);
+      opacity: 0.6;
+    }
+    .modal-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .modal .btn { flex: 1; min-width: 120px; }
+
+    /* Lore & Ritual */
+    .lore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+    @media (max-width: 720px) { .lore-grid { grid-template-columns: 1fr; } }
+    .lore-text { color: var(--text-muted); font-size: 0.98rem; }
+    .lore-text p { margin-bottom: var(--space-3); }
+
+    .ritual {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4);
+    }
+    @media (max-width: 640px) { .ritual { grid-template-columns: 1fr; } }
+    .ritual-step {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: var(--space-4); text-align: center;
+    }
+    .ritual-step .num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--gold-dim);
+      color: #050403; display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; margin-bottom: var(--space-3);
+    }
+    .ritual-step h4 { margin: 0 0 var(--space-2); font-size: 1rem; }
+
+    /* Scarcity bar */
+    .scarcity {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+      height: 6px; overflow: hidden; margin: var(--space-2) 0;
+    }
+    .scarcity-fill {
+      height: 100%; background: linear-gradient(to right, var(--gold), var(--gold-light));
+      width: 35%; transition: width 600ms ease;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border); padding: var(--space-6) 0 var(--space-4);
+      font-size: 0.8rem; color: var(--text-muted); text-align: center;
+    }
+
+    /* Accessibility & polish */
+    .btn:focus-visible, .cookie-card:focus-visible {
+      outline: 2px solid var(--gold); outline-offset: 2px;
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* Loading shimmer for gallery skeletons (demo) */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-elev) 50%, var(--surface) 75%);
+      background-size: 200% 100%; animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+
+    /* Mobile polish */
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2.35rem; }
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(142px, 1fr)); gap: var(--space-3); }
+      .container { padding: 0 var(--space-3); }
+      .nav { padding: var(--space-3) 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav class="nav">
+        <div class="logo" aria-label="Crypto Fortune Cookies">
+          <span>🥠</span> <strong>FORTUNE</strong>
+        </div>
+        <div class="nav-links">
+          <a href="#gallery">Gallery</a>
+          <a href="#lore">The Lore</a>
+          <a href="mint-page.html">Enter the Vault</a>
+          <span class="wallet-chip" id="wallet-chip" aria-live="polite"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="badge" aria-label="Limited edition drop">EDITION OF 10 • ON BASE — GAS ONLY</div>
+        <h1 id="hero-title">The vault is open.<br>Claim your prophecy.</h1>
+        <p>10 sealed Crypto Fortune Cookies on Base. Each holds a unique on-chain oracle (gas only for redeemers). Redeem a signed voucher. Crack. Receive what was always meant for you.</p>
+        
+        <div class="hero-actions">
+          <a href="mint-page.html" class="btn btn-primary" aria-label="Go to mint page to claim a fortune cookie">Claim a Cookie — gas only (Base)</a>
+          <a href="#gallery" class="btn btn-ghost">Browse the Gallery</a>
+        </div>
+
+        <div class="stats" aria-label="Collection statistics">
+          <div><span id="minted-count">0</span> / 10 minted</div>
+          <div><span>gas only (Base)</span> each</div>
+          <div>Closes in <span id="countdown">3d 19h</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" aria-labelledby="gallery-title">
+      <div class="container">
+        <h2 id="gallery-title" class="section-title">The Collection</h2>
+        <p style="color: var(--text-muted); max-width: 52ch; margin-bottom: var(--space-5);">Each cookie is procedurally sealed at the moment of mint. Hover or tap any to preview its sealed prophecy. Click “Crack to Reveal” inside for the full experience.</p>
+
+        <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Fortune cookie gallery">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- LORE -->
+    <section id="lore" style="background: var(--bg-elev);">
+      <div class="container">
+        <div class="lore-grid">
+          <div>
+            <h2 class="section-title">The Lore</h2>
+            <div class="lore-text">
+              <p>For centuries, fortune cookies carried whispers from the unseen. We sealed that tradition inside the ledger.</p>
+              <p>Each Crypto Fortune Cookie is an artifact — not generated noise, but a deliberate inscription. The moment you mint, a unique seed locks a prophecy that can never be altered or predicted in advance.</p>
+              <p>Only the holder may crack the seal. What emerges is yours alone.</p>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:1rem; margin:0 0 var(--space-3); color:var(--gold);">Provenance</h3>
+            <div style="font-size:0.9rem; color:var(--text-muted); line-height:1.7;">
+              • 10 total artifacts<br>
+              • Base (Ethereum L2) • Gas-only redemption<br>
+              • Each fortune cryptographically bound to its token<br>
+              • No royalties. No utilities. Pure artifact.<br>
+              • Contract verifiable on Basescan (or sepolia.basescan.org for testnet)
+            </div>
+            <div style="margin-top: var(--space-4); font-size:0.8rem; color:var(--gold-dim);">Not financial advice. These are objects of mystery and reflection.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE RITUAL -->
+    <section>
+      <div class="container">
+        <h2 class="section-title" style="text-align:center;">The Ritual</h2>
+        <div class="ritual" role="list">
+          <div class="ritual-step" role="listitem">
+            <div class="num">1</div>
+            <h4>Connect</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Connect any EVM wallet (MetaMask etc.) on Base. No KYC. No custody. Redeem with a signed voucher.</p>
+          </div>
+          <div class="ritual-step" role="listitem">
+            <div class="num">2</div>
+            <h4>Claim</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Mint for gas only (Base). Your cookie is sealed onchain instantly.</p>
+          </div>
+          <div class="ritual-step" role="listitem">
+            <div class="num">3</div>
+            <h4>Crack</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">Reveal the prophecy. The slip emerges only for you.</p>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top: var(--space-6);">
+          <a href="mint-page.html" class="btn btn-primary">Begin the Ritual →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      Crafted for those who still believe in mystery. • 
+      <a href="mint-page.html">Mint Page</a> • 
+      <span style="opacity:0.6;">View on Magic Eden (soon)</span>
+    </div>
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div id="modal-id" style="font-family:ui-monospace,monospace; font-size:0.8rem; color:var(--gold);"></div>
+          <div id="modal-rarity" style="font-size:0.75rem; color:var(--text-muted);"></div>
+        </div>
+        <button class="btn btn-ghost" id="modal-close" aria-label="Close preview" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="cookie-display" id="modal-cookie-display"></div>
+
+        <div class="fortune-box" id="modal-fortune" aria-live="polite" style="display:none;"></div>
+
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="modal-crack-btn">Crack to Reveal</button>
+          <button class="btn btn-ghost" id="modal-copy-btn" style="display:none;">Copy Prophecy</button>
+          <button class="btn btn-ghost" id="modal-retry-btn" style="display:none;">Re-seal &amp; Try Another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === DATA: 12 gallery items with pre-sealed full fortunes for consistency ===
+    const GALLERY_ITEMS = [
+      { id: "004", rarity: "Whisper", variant: "default", teaser: "The chain does not forget those who build in silence.", full: "The chain does not forget those who build in silence." },
+      { id: "019", rarity: "Ember", variant: "gold", teaser: "Your greatest holding is the conviction you refuse to sell.", full: "Your greatest holding is the conviction you refuse to sell." },
+      { id: "031", rarity: "Veil", variant: "shadow", teaser: "The next block reveals what the last transaction concealed.", full: "The next block reveals what the last transaction concealed." },
+      { id: "058", rarity: "Oracle", variant: "crimson", teaser: "Seek not the pump; become the narrative others chase.", full: "Seek not the pump; become the narrative others chase." },
+      { id: "077", rarity: "Whisper", variant: "default", teaser: "A cracked cookie shares its secret only with the patient.", full: "A cracked cookie shares its secret only with the patient." },
+      { id: "112", rarity: "Ember", variant: "gold", teaser: "The oracle speaks in code: HODL the unknown.", full: "The oracle speaks in code: HODL the unknown." },
+      { id: "143", rarity: "Veil", variant: "shadow", teaser: "Fortune arrives dressed as the dip you almost sold.", full: "Fortune arrives dressed as the dip you almost sold." },
+      { id: "189", rarity: "Oracle", variant: "crimson", teaser: "Your wallet is a temple. Guard its private keys as relics.", full: "Your wallet is a temple. Guard its private keys as relics." },
+      { id: "214", rarity: "Whisper", variant: "default", teaser: "The rarest prophecies are the ones you mint for yourself.", full: "The rarest prophecies are the ones you mint for yourself." },
+      { id: "267", rarity: "Ember", variant: "gold", teaser: "Between the genesis and the finality lies your edge.", full: "Between the genesis and the finality lies your edge." },
+      { id: "301", rarity: "Veil", variant: "shadow", teaser: "Those who stare at charts miss the stars they were meant to follow.", full: "Those who stare at charts miss the stars they were meant to follow." },
+      { id: "344", rarity: "Oracle", variant: "crimson", teaser: "The ledger is honest; it is your story that needs revision.", full: "The ledger is honest; it is your story that needs revision." }
+    ];
+
+    // Additional full fortunes for random minting / retry (distinct pool)
+    const FORTUNE_POOL = [
+      "Reveal your fortune only when the moment has ripened.",
+      "A single signature can change a destiny. Choose wisely.",
+      "The cookie was always empty until you filled it with belief.",
+      "Legacy is measured in blocks, not likes.",
+      "What you mint today whispers to the holders of tomorrow.",
+      "Embrace the uncertainty; it is the only true alpha.",
+      "The fold hides the message until the right eyes open it.",
+      "Your fortune is not in the price, but in the patience.",
+      "Every great collection began with one sealed promise.",
+      "The gas was high, but the prophecy was worth it.",
+      "Listen to the quiet cookies; the loud ones are usually rugs.",
+      "Destiny is onchain. Your part is to inscribe it.",
+      "The ancestors sealed this for the one who waited.",
+      "In the space between confirmations, truth arrives.",
+      "You did not find this cookie. It found you."
+    ];
+
+    let currentModalItem = null;
+    let currentModalSVG = null;
+    let isRevealed = false;
+
+    // Utility: create premium fortune cookie SVG with crack layers
+    function createCookieSVG({ id = "000", variant = "default", size = 140, cracked = false } = {}) {
+      const ns = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("width", size);
+      svg.setAttribute("height", Math.round(size * 0.78));
+      svg.setAttribute("viewBox", "0 0 200 160");
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", `Fortune cookie #${id}`);
+
+      // Color per variant (premium baked tones)
+      let bodyFill = "#5c4a35";
+      let bodyStroke = "#3f3223";
+      let accent = "#c5a46e";
+      if (variant === "gold") { bodyFill = "#6b5538"; accent = "#e8d5a3"; }
+      if (variant === "shadow") { bodyFill = "#3a3129"; accent = "#8a6f42"; }
+      if (variant === "crimson") { bodyFill = "#4a2f2f"; accent = "#a36b5b"; }
+
+      // Subtle grain via defs + rect (light)
+      const defs = document.createElementNS(ns, "defs");
+      const grad = document.createElementNS(ns, "linearGradient");
+      grad.setAttribute("id", `cookieGrad-${id}`);
+      grad.setAttribute("x1", "0%"); grad.setAttribute("y1", "0%");
+      grad.setAttribute("x2", "100%"); grad.setAttribute("y2", "100%");
+      grad.innerHTML = `<stop offset="0%" stop-color="${bodyFill}"/><stop offset="100%" stop-color="#3f3223"/>`;
+      defs.appendChild(grad);
+
+      const shineGrad = document.createElementNS(ns, "linearGradient");
+      shineGrad.setAttribute("id", `shine-${id}`);
+      shineGrad.setAttribute("x1", "20%"); shineGrad.setAttribute("y1", "20%");
+      shineGrad.setAttribute("x2", "80%"); shineGrad.setAttribute("y2", "85%");
+      shineGrad.innerHTML = `<stop offset="0%" stop-color="rgba(232,213,163,0.0)"/><stop offset="50%" stop-color="rgba(232,213,163,0.18)"/><stop offset="100%" stop-color="rgba(232,213,163,0.0)"/>`;
+      defs.appendChild(shineGrad);
+      svg.appendChild(defs);
+
+      // Main cookie body (folded look via two overlapping ellipses + path)
+      const gBody = document.createElementNS(ns, "g");
+      gBody.setAttribute("class", "cookie-body");
+
+      // Bottom half
+      const bottom = document.createElementNS(ns, "ellipse");
+      bottom.setAttribute("cx", "100");
+      bottom.setAttribute("cy", "88");
+      bottom.setAttribute("rx", "68");
+      bottom.setAttribute("ry", "42");
+      bottom.setAttribute("fill", `url(#cookieGrad-${id})`);
+      bottom.setAttribute("stroke", bodyStroke);
+      bottom.setAttribute("stroke-width", "3");
+      bottom.setAttribute("transform", "rotate(-7 100 88)");
+      gBody.appendChild(bottom);
+
+      // Top half (slightly offset for fold volume)
+      const top = document.createElementNS(ns, "ellipse");
+      top.setAttribute("cx", "100");
+      top.setAttribute("cy", "78");
+      top.setAttribute("rx", "64");
+      top.setAttribute("ry", "39");
+      top.setAttribute("fill", bodyFill);
+      top.setAttribute("stroke", bodyStroke);
+      top.setAttribute("stroke-width", "2.5");
+      top.setAttribute("transform", "rotate(-4 100 78)");
+      gBody.appendChild(top);
+
+      // Crease / fold line
+      const crease = document.createElementNS(ns, "path");
+      crease.setAttribute("d", "M38 72 Q100 95 162 73");
+      crease.setAttribute("fill", "none");
+      crease.setAttribute("stroke", "#2f261d");
+      crease.setAttribute("stroke-width", "7");
+      crease.setAttribute("stroke-linecap", "round");
+      crease.setAttribute("opacity", "0.65");
+      gBody.appendChild(crease);
+
+      // Subtle top highlight
+      const highlight = document.createElementNS(ns, "ellipse");
+      highlight.setAttribute("cx", "88");
+      highlight.setAttribute("cy", "62");
+      highlight.setAttribute("rx", "38");
+      highlight.setAttribute("ry", "18");
+      highlight.setAttribute("fill", `url(#shine-${id})`);
+      highlight.setAttribute("transform", "rotate(-6 88 62)");
+      gBody.appendChild(highlight);
+
+      // Pinched ends (the "ears" of the cookie)
+      const earL = document.createElementNS(ns, "path");
+      earL.setAttribute("d", "M42 65 Q30 78 38 90");
+      earL.setAttribute("fill", "none");
+      earL.setAttribute("stroke", bodyStroke);
+      earL.setAttribute("stroke-width", "9");
+      earL.setAttribute("stroke-linecap", "round");
+      gBody.appendChild(earL);
+
+      const earR = document.createElementNS(ns, "path");
+      earR.setAttribute("d", "M158 66 Q170 79 162 91");
+      earR.setAttribute("fill", "none");
+      earR.setAttribute("stroke", bodyStroke);
+      earR.setAttribute("stroke-width", "9");
+      earR.setAttribute("stroke-linecap", "round");
+      gBody.appendChild(earR);
+
+      svg.appendChild(gBody);
+
+      // === CRACK LINES (initially undrawn) ===
+      const gCracks = document.createElementNS(ns, "g");
+      gCracks.setAttribute("class", "cracks");
+
+      const crackPaths = [
+        "M 55 55 L 72 68 L 89 60 L 102 74",
+        "M 68 82 Q 85 71 98 85 L 115 76",
+        "M 92 52 L 108 67 Q 120 60 133 71",
+        "M 115 88 L 133 75 L 148 86"
+      ];
+
+      crackPaths.forEach((d, i) => {
+        const p = document.createElementNS(ns, "path");
+        p.setAttribute("d", d);
+        p.setAttribute("fill", "none");
+        p.setAttribute("stroke", accent);
+        p.setAttribute("stroke-width", "1.35");
+        p.setAttribute("stroke-linecap", "round");
+        p.setAttribute("stroke-linejoin", "round");
+        p.setAttribute("class", "crack");
+        p.style.transition = "stroke-dashoffset 620ms cubic-bezier(0.22, 1, 0.36, 1)";
+        // Initial hidden (will be set in crack function)
+        p.style.strokeDasharray = "90";
+        p.style.strokeDashoffset = "90";
+        gCracks.appendChild(p);
+      });
+
+      svg.appendChild(gCracks);
+
+      // The fortune slip (peeking paper)
+      const gSlip = document.createElementNS(ns, "g");
+      gSlip.setAttribute("class", "slip");
+      gSlip.style.transition = "transform 520ms cubic-bezier(0.23,1,0.32,1)";
+
+      const slip = document.createElementNS(ns, "rect");
+      slip.setAttribute("x", "82");
+      slip.setAttribute("y", "68");
+      slip.setAttribute("width", "38");
+      slip.setAttribute("height", "11");
+      slip.setAttribute("rx", "1.5");
+      slip.setAttribute("fill", "#e8d9b8");
+      slip.setAttribute("stroke", "#3f3223");
+      slip.setAttribute("stroke-width", "0.8");
+      slip.setAttribute("transform", "rotate(-11 101 73.5)");
+      gSlip.appendChild(slip);
+
+      // Tiny decorative lines on slip (like printed fortune)
+      for (let i = 0; i < 3; i++) {
+        const line = document.createElementNS(ns, "line");
+        line.setAttribute("x1", "85");
+        line.setAttribute("y1", "71.5" + (i * 1.6));
+        line.setAttribute("x2", "116");
+        line.setAttribute("y2", "71.5" + (i * 1.6));
+        line.setAttribute("stroke", "#5c4a35");
+        line.setAttribute("stroke-width", "0.7");
+        line.setAttribute("opacity", "0.55");
+        line.setAttribute("transform", "rotate(-11 101 73.5)");
+        gSlip.appendChild(line);
+      }
+      svg.appendChild(gSlip);
+
+      // Store refs for animation
+      svg._halves = { bottom, top };
+      svg._cracks = Array.from(gCracks.querySelectorAll(".crack"));
+      svg._slip = gSlip;
+      svg._body = gBody;
+
+      if (cracked) {
+        // pre-cracked state for some cards if needed
+        applyCrackedState(svg);
+      }
+
+      return svg;
+    }
+
+    function applyCrackedState(svg) {
+      if (!svg._halves) return;
+      const { top, bottom } = svg._halves;
+      top.setAttribute("transform", "rotate(-4 100 78) translate(0,-5)");
+      bottom.setAttribute("transform", "rotate(-7 100 88) translate(0,4)");
+      if (svg._slip) svg._slip.setAttribute("transform", "translate(6,-2) rotate(-11 101 73.5)");
+      if (svg._cracks) {
+        svg._cracks.forEach((p, idx) => {
+          p.style.strokeDasharray = "90";
+          p.style.strokeDashoffset = "0";
+          p.style.transition = "none";
+        });
+      }
+    }
+
+    function resetCrackedState(svg) {
+      if (!svg._halves) return;
+      const { top, bottom } = svg._halves;
+      top.setAttribute("transform", "rotate(-4 100 78)");
+      bottom.setAttribute("transform", "rotate(-7 100 88)");
+      if (svg._slip) svg._slip.setAttribute("transform", "rotate(-11 101 73.5)");
+      if (svg._cracks) {
+        svg._cracks.forEach(p => {
+          p.style.transition = "none";
+          p.style.strokeDashoffset = "90";
+          // force reflow
+          void p.offsetWidth;
+          p.style.transition = "stroke-dashoffset 620ms cubic-bezier(0.22, 1, 0.36, 1)";
+        });
+      }
+    }
+
+    // Trigger the full crack + reveal animation on an SVG instance
+    function crackCookie(svg, callback) {
+      if (!svg || !svg._cracks) return;
+
+      resetCrackedState(svg); // ensure clean start
+
+      // Separate the halves
+      const { top, bottom } = svg._halves;
+      top.style.transition = "transform 580ms cubic-bezier(0.23,1,0.32,1)";
+      bottom.style.transition = "transform 580ms cubic-bezier(0.23,1,0.32,1)";
+      top.setAttribute("transform", "rotate(-4 100 78) translate(0,-5.5)");
+      bottom.setAttribute("transform", "rotate(-7 100 88) translate(0,4.5)");
+
+      // Slip peeks further
+      if (svg._slip) {
+        svg._slip.style.transition = "transform 620ms cubic-bezier(0.23,1,0.32,1)";
+        svg._slip.setAttribute("transform", "translate(8,-3) rotate(-11 101 73.5)");
+      }
+
+      // Draw cracks
+      svg._cracks.forEach((p, i) => {
+        p.style.transition = `stroke-dashoffset ${580 + i * 40}ms cubic-bezier(0.22,1,0.36,1)`;
+        // stagger
+        setTimeout(() => {
+          p.style.strokeDashoffset = "0";
+        }, 60 * i);
+      });
+
+      // Finish
+      setTimeout(() => {
+        if (callback) callback();
+      }, 820);
+    }
+
+    // === GALLERY RENDER ===
+    function renderGallery() {
+      const grid = document.getElementById("gallery-grid");
+      grid.innerHTML = "";
+
+      GALLERY_ITEMS.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "cookie-card";
+        card.setAttribute("role", "listitem");
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("aria-label", `Fortune cookie #${item.id} — ${item.rarity}`);
+
+        const svgWrap = document.createElement("div");
+        svgWrap.className = "svg-wrap";
+        const svg = createCookieSVG({ id: item.id, variant: item.variant, size: 118 });
+        svgWrap.appendChild(svg);
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerHTML = `
+          <span class="id">#${item.id}</span>
+          <span class="rarity">${item.rarity}</span>
+        `;
+
+        const teaser = document.createElement("div");
+        teaser.className = "teaser";
+        teaser.textContent = item.teaser;
+
+        const status = document.createElement("div");
+        status.className = `status ${parseInt(item.id) % 3 === 0 ? "minted" : "available"}`;
+        status.innerHTML = parseInt(item.id) % 3 === 0 
+          ? "✦ Minted" 
+          : "Available • gas only (Base)";
+
+        card.appendChild(svgWrap);
+        card.appendChild(meta);
+        card.appendChild(teaser);
+        card.appendChild(status);
+
+        // Interactions
+        const open = () => openModal(item, svg); // pass original svg for reference but we clone in modal
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+
+        // Subtle hover wobble on the svg
+        card.addEventListener("mouseenter", () => {
+          svg.style.transition = "transform 260ms ease";
+          svg.style.transform = "rotate(0.8deg)";
+        });
+        card.addEventListener("mouseleave", () => {
+          svg.style.transform = "rotate(0deg)";
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    // === MODAL ===
+    function openModal(item, sourceSvgForRef) {
+      const backdrop = document.getElementById("modal");
+      const display = document.getElementById("modal-cookie-display");
+      const fortuneEl = document.getElementById("modal-fortune");
+      const crackBtn = document.getElementById("modal-crack-btn");
+      const copyBtn = document.getElementById("modal-copy-btn");
+      const retryBtn = document.getElementById("modal-retry-btn");
+      const idEl = document.getElementById("modal-id");
+      const rarityEl = document.getElementById("modal-rarity");
+      const closeBtn = document.getElementById("modal-close");
+
+      currentModalItem = item;
+      isRevealed = false;
+
+      // Reset UI
+      display.innerHTML = "";
+      fortuneEl.style.display = "none";
+      fortuneEl.textContent = "";
+      copyBtn.style.display = "none";
+      retryBtn.style.display = "none";
+      crackBtn.style.display = "inline-flex";
+      crackBtn.textContent = "Crack to Reveal";
+      crackBtn.disabled = false;
+
+      idEl.textContent = `#${item.id}`;
+      rarityEl.textContent = item.rarity + " edition";
+
+      // Fresh SVG in modal for clean animation
+      const svg = createCookieSVG({ id: item.id, variant: item.variant, size: 168 });
+      display.appendChild(svg);
+      currentModalSVG = svg;
+
+      // Show
+      backdrop.style.display = "flex";
+      backdrop.setAttribute("aria-hidden", "false");
+      // focus management
+      setTimeout(() => crackBtn.focus(), 80);
+
+      // Wire buttons
+      const doCrack = () => {
+        if (isRevealed) return;
+        crackBtn.disabled = true;
+        crackBtn.textContent = "Cracking…";
+
+        crackCookie(svg, () => {
+          // Reveal fortune
+          fortuneEl.textContent = item.full;
+          fortuneEl.style.display = "block";
+          copyBtn.style.display = "inline-flex";
+          retryBtn.style.display = "inline-flex";
+          crackBtn.style.display = "none";
+          isRevealed = true;
+
+          // polite announcement
+          const live = document.createElement("span");
+          live.className = "sr-only";
+          live.textContent = "Fortune revealed: " + item.full;
+          document.body.appendChild(live);
+          setTimeout(() => live.remove(), 1200);
+        });
+      };
+
+      crackBtn.onclick = doCrack;
+
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(item.full).then(() => {
+          const orig = copyBtn.textContent;
+          copyBtn.textContent = "Copied ✓";
+          copyBtn.style.color = "var(--gold-light)";
+          setTimeout(() => {
+            copyBtn.textContent = orig;
+            copyBtn.style.color = "";
+          }, 1400);
+        }).catch(() => {
+          // fallback
+          const ta = document.createElement("textarea");
+          ta.value = item.full;
+          document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+          copyBtn.textContent = "Copied ✓";
+          setTimeout(() => copyBtn.textContent = "Copy Prophecy", 1400);
+        });
+      };
+
+      retryBtn.onclick = () => {
+        // Pick a new random full fortune for fun preview
+        const newFortune = FORTUNE_POOL[Math.floor(Math.random() * FORTUNE_POOL.length)];
+        item.full = newFortune; // mutate for this session preview only
+
+        fortuneEl.style.display = "none";
+        copyBtn.style.display = "none";
+        retryBtn.style.display = "none";
+        crackBtn.style.display = "inline-flex";
+        crackBtn.textContent = "Crack to Reveal";
+        crackBtn.disabled = false;
+        isRevealed = false;
+
+        // reset svg visually
+        display.innerHTML = "";
+        const fresh = createCookieSVG({ id: item.id, variant: item.variant, size: 168 });
+        display.appendChild(fresh);
+        currentModalSVG = fresh;
+      };
+
+      // Close handlers
+      const close = () => {
+        backdrop.style.display = "none";
+        backdrop.setAttribute("aria-hidden", "true");
+        crackBtn.onclick = null;
+        copyBtn.onclick = null;
+        retryBtn.onclick = null;
+        closeBtn.onclick = null;
+        backdrop.onclick = null;
+        document.removeEventListener("keydown", escHandler);
+        currentModalSVG = null;
+      };
+
+      const escHandler = (e) => { if (e.key === "Escape") close(); };
+      closeBtn.onclick = close;
+      backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+      document.addEventListener("keydown", escHandler, { once: true });
+    }
+
+    // === WALLET SIM (shared demo state) ===
+    function updateWalletUI() {
+      const chip = document.getElementById("wallet-chip");
+      const addr = localStorage.getItem("cfc_wallet");
+      if (addr) {
+        chip.textContent = addr;
+        chip.classList.add("connected");
+        chip.title = "Demo wallet connected (this session)";
+      } else {
+        chip.classList.remove("connected");
+        chip.style.display = "none";
+      }
+    }
+
+    function simulateConnect() {
+      // Shared across pages via localStorage for demo feel
+      const fake = "7xKX" + Math.random().toString(36).slice(2,6).toUpperCase() + "p9Q2";
+      localStorage.setItem("cfc_wallet", fake);
+      updateWalletUI();
+      // also update mint page if open, but since separate, on load it will read
+      return fake;
+    }
+
+    // === INIT ===
+    function init() {
+      // Render gallery
+      renderGallery();
+
+      // Wallet chip (read-only on index; connect happens on mint page)
+      updateWalletUI();
+
+      // Fake minted count + countdown
+      const mintedEl = document.getElementById("minted-count");
+      let minted = parseInt(localStorage.getItem("cfc_minted_count") || "317", 10);
+      mintedEl.textContent = minted;
+
+      // Simple live countdown
+      const cd = document.getElementById("countdown");
+      // Hardcoded 3d19h for this demo; could be dynamic
+      cd.textContent = "3d 19h";
+
+      // Keyboard hint
+      console.log("%c[Crypto Fortune] Premium static demo ready. All interactions vanilla.", "color:#665");
+
+      // Optional: seed one demo mint if never interacted
+      if (!localStorage.getItem("cfc_has_minted")) {
+        // nothing auto — user must visit mint page
+      }
+    }
+
+    // Boot
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
