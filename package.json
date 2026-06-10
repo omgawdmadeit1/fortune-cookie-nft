@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "prepare": "node scripts/prepare-assets.js",
+    "prepare:lvlltd": "node scripts/prepare-assets.js https://lvlltd.com",
     "sign": "node scripts/sign-vouchers.js",
     "sign:demo": "node scripts/sign-demo-vouchers.js",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network baseSepolia",
     "deploy:mainnet": "hardhat run scripts/deploy.ts --network base",
     "verify:sepolia": "hardhat verify --network baseSepolia",
-    "verify:mainnet": "hardhat verify --network base"
+    "verify:mainnet": "hardhat verify --network base",
+    "demo": "npm run sign:demo",
+    "launch:testnet": "echo '1. Fill .env with DEPLOYER_PRIVATE_KEY + SIGNER_PRIVATE_KEY. 2. npm run deploy:sepolia  3. Set CONTRACT_ADDRESS in .env  4. npm run sign  5. Manually update CONTRACT in mint-page.html + index.html  6. vercel --prod'"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",

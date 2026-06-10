@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "framework": null,
+  "devCommand": "npx serve . -p 3000",
+  "routes": [
+    { "src": "/mint", "dest": "/mint-page.html" },
+    { "src": "/claim", "dest": "/mint-page.html" },
+    { "src": "/fortune", "dest": "/mint-page.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}
